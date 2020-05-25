@@ -1,414 +1,867 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
+#include <stdbool.h>
 
-//White Pieces
-int w_location_X[12], w_location_Y[12];
-char white_piece = 'W';
+char white = 'B';
+char black = 'P';
 
+int black_pieces_eaten = 0;
+int white_pieces_eaten = 0;
 
-//Black Pieces
-int b_location_X[12], b_location_Y[12];
-char black_piece = 'B';
+void draw_map();
+void draw_menu();
+void draw_personalizar();
 
-
-int blackPiece[8];
-int width = 64, height = 24;
-char letter_ID_on_board [64];
-char alphabet [8];
-
-int running = 0;
-
-//Locates which arrays are to be changed
-int array_foundX = 0;
-int array_foundY = 0;
-
-
-void pieces_start_location();
-void draw_board();
-void creating_letters_ID_on_board();
-void select_piece();
-void move_piece();
+void present_map();
+void present_menu();
+void move_piece_W();
+void move_piece_B();
+void play();
+void GAME();
+void creditos();
+void opening();
+void game_over();
 
 
-int help_move_pieces_number();
+char board[34][95];
+char menu[11][41];
+
+bool permit;
+bool running = true;
+bool running_game = false;
+bool pvp = false;
+bool winner;
+
+int pointer = 4;
+
+int pc_location[12][2] = {
+    {2,23 },    {2,43 },    {2,63 },    {2,83 },
+    {6,13 },    {6,33 },    {6,53 },    {6,73 },
+    {10,23},    {10,43},    {10,63},    {10,83}
+};
+
+char point;
+
 int main()
+
 {
-
-    creating_letters_ID_on_board();
-   pieces_start_location();
-//    while(running != 4)
-//    {
-//        draw_board();
-//        select_piece();
-//        move_piece();
-//        running++;
-//    }
-    draw_board();
-
-    select_piece();
-
-    
-
-    
+    opening();
+    GAME();
     return 0;
-}
-
-void move_piece(){
-
-    char letter;
-    
-    int new_locationY, new_locationX;
-       
-    //Defines the row and column(column needs to be defined by number)
-    int number_location_ID, letter_location_ID;
-    
-    //Keeps pieces found in row and column
-    int locateX[3], locateY[3];
-    
-    printf(" To: ");
-    scanf("%c %i", &letter, &number_location_ID);
-    
-
-
-    
-    //Finds the row
-    switch(letter){
-            case('A'):
-                letter_location_ID = 3;
-                break;
-            case('B'):
-                letter_location_ID = 12;
-                break;
-            case('C'):
-                letter_location_ID = 18;
-                break;
-            case('D'):
-                letter_location_ID = 27;
-                break;
-            case('E'):
-                letter_location_ID = 34;
-                break;
-            case('F'):
-                letter_location_ID = 43;
-                break;
-            case('G'):
-                letter_location_ID = 51;
-                break;
-            case('H'):
-                letter_location_ID = 60;
-                break;
-           
-       }
-
-       //Finds the column
-       number_location_ID = help_move_pieces_number(number_location_ID);
-       
-    w_location_X[array_foundX] = letter_location_ID;
-    w_location_Y[array_foundY] = number_location_ID;
-       
-
-}
-
-void select_piece()
-{
-    //Defines the column
-    char letter;
-    
-    //Defines the row and column(column needs to be defined by number)
-    int number_location_ID, letter_location_ID;
-    
-    //Keeps pieces found in row and column
-    int locateX[3], locateY[3];
-    
-    for(int i = 0; i < 4;i++){
-        locateX[i] = 5;
-        locateY[i] = 6;
-    }
-    
-
-    
-    printf("White's Turn: \n\n Move Piece: ");
-    scanf("%c %i", &letter, &number_location_ID);
-
-       
-    //Finds the row
-    switch(letter){
-            case('A'):
-                letter_location_ID = 3;
-                break;
-            case('B'):
-                letter_location_ID = 12;
-                break;
-            case('C'):
-                letter_location_ID = 18;
-                break;
-            case('D'):
-                letter_location_ID = 27;
-                break;
-            case('E'):
-                letter_location_ID = 34;
-                break;
-            case('F'):
-                letter_location_ID = 43;
-                break;
-            case('G'):
-                letter_location_ID = 51;
-                break;
-            case('H'):
-                letter_location_ID = 60;
-                break;
-        
-    }
-
-    //Finds the column
-    number_location_ID = help_move_pieces_number(number_location_ID);
-    
-    //Finding all pieces in the row
-    for(int i = 0; i < 12; i++)
-    {
-        if(w_location_Y[i] == number_location_ID){
-            locateY[array_foundY] = i;
-            printf("Y%i: %i\n\n\n",array_foundY, locateY[array_foundY]);
-            array_foundY++;
-        }
-//        printf("\nY%i:          %i", i, locateY[i]);
-    }
-    
-    //Finds all the pieces in the column
-    for(int i = 0; i < 12; i++)
-    {
-        if(w_location_X[i] == letter_location_ID){
-            locateX[array_foundX] = i;
-            printf("X : %i\n\n\n", locateX[array_foundX]);
-            array_foundX++;
-        }
-    }
-    for(int i = 0; i < 4;i++){
-           printf("teST:  x%i: %i   ,   y%i: %i\n",i, locateX[i],i,    locateY[i]);
-        
-       }
    
-    // Finding the Arrays that are to be changed
-    for(int i = 0; i < 4; i++){
-        for(int j = 0; j < 4; j++){
-            if(locateX[i] == locateY[j])
-            {
-                printf("Y%i: %i       ,      X%i: %i\n", j, locateY[j], i , locateX[i]);
-                array_foundY = locateY[j];
-                array_foundX = locateX[i];
-                printf("%i\n%i\n", array_foundY, array_foundX);
-            }
-            
-        }
+}
+
+void opening()
+{
+    printf("\e[1;1H\e[2J");
+    printf("\n\n\nBem Vindo ao jogo de dama!\n\nPara navegar o menu principal usa os inputs: \n        'w' (para mover para cima)   \n        's' (para mover para baixo)\n        'k' (para confirmar a opcao)\n\n Dê o input 'k' para continuar\n");
+    scanf("%c", &point);
+    printf("\e[1;1H\e[2J");
+}
+void creditos()
+{
+    bool credito = true;
+    while (credito){
+        printf("\e[1;1H\e[2J");
+        for(int i = 0; i < 41; i++)
+               printf("-");
+           printf("\n");
+           
+           for(int i = 0; i < 11; i++){
+               for (int j = 0; j < 41; j++){
+                   
+                   if (i == 4 && j ==9)
+                       printf("Jogo Criado por Michael Lima");
+                   
+                   if (i == 6 && j ==17)
+                       printf("->");
+                   
+                   if (i == 6 && j ==17)
+                       printf ("Voltar");
+                   
+                   printf(" ");
+               }
+               printf("\n");
+           }
+           
+        for(int i = 0; i < 41; i++)
+            printf("-");
+        
+        printf("\n\n");
+
+        scanf(" %c", &point);
+        
+        if(point == 'k' || point == 'K')
+            credito = false;
     }
 }
 
-int help_move_pieces_number(int number)
-{
-    switch (number){
-               
-           case(1):
-                number = 1;
-               break;
-           case(2):
-               number = 4;
-               break;
-           case(3):
-               number = 7;
-               break;
-           case(4):
-               number = 10;
-               break;
-           case(5):
-               number = 13;
-               break;
-           case(6):
-               number = 16;
-               break;
-           case(7):
-               number = 19;
-               break;
-           case(8):
-               number = 21;
-               break;
-       }
+void GAME(){
     
-    return number;
+    while (running){
+        draw_menu();
+        printf("\e[1;1H\e[2J");
+    }
 }
 
-
-
-void pieces_start_location()
+void draw_personalizar()
 {
-    w_location_X[0] = 12, w_location_X[1] = 27, w_location_X[2] = 43, w_location_X[3] = 60,
-    w_location_X[4] = 3, w_location_X[5] = 18, w_location_X[6] = 34, w_location_X[7] = 51,
-    w_location_X[8] = 12, w_location_X[9] = 27, w_location_X[10] = 43, w_location_X[11] = 60,
-    
-    w_location_Y[0] = 1, w_location_Y[1] = 1, w_location_Y[2] = 1, w_location_Y[3] = 1,
-    w_location_Y[4] = 4, w_location_Y[5] = 4, w_location_Y[6] = 4, w_location_Y[7] = 4,
-    w_location_Y[8] = 7, w_location_Y[9] = 7, w_location_Y[10] = 7, w_location_Y[11] = 7,
-    
-    
-    b_location_X[0] = 3, b_location_X[1] = 18, b_location_X[2] = 34, b_location_X[3] = 51,
-    b_location_X[4] = 12, b_location_X[5] = 27, b_location_X[6] = 43,b_location_X[7] = 60;
-    b_location_X[8] = 3, b_location_X[9] = 18, b_location_X[10] = 34, b_location_X[11] = 51,
-
-    
-    b_location_Y[0] = 16, b_location_Y[1] = 16, b_location_Y[2] = 16, b_location_Y[3] = 16,
-    b_location_Y[4] = 19, b_location_Y[5] = 19, b_location_Y[6] = 19, b_location_Y[7] = 19,
-    b_location_Y[8] = 22, b_location_Y[9] = 22, b_location_Y[10] = 22, b_location_Y[11] = 22;
-    
-}
-
-void draw_board()
-{
-    int black_square = width/8, loop_squares = black_square * 2;
-    int squares = width/8;
-    int number_ID_on_board = 0, number_ID_printed = 1;
-    int final_line = 0;
-    int board_color_sequence = 0;
-    int line = 0;
-    int letter = 0;
-    //array Number of pieces
-    int w_locateX = 0, w_locateY = 0;
-    int b_locateX = 0, b_locateY = 0;
-    
+    bool loop = true;
     printf("\e[1;1H\e[2J");
+    while(loop){
+        printf("\n\n\nPersonalize a peca BRANCA. Como que você deseja que a peca branca seja?\n Escolhe uma letra ou numero:\n\n\n\n");
+        scanf(" %c", &white);
+        printf("\e[1;1H\e[2J");
+        printf("\n\n\n\nPersonalize a peca PRETA. Como que você deseja que a peca branca seja?\n Escolhe uma letra ou numero:\n\n\n\n");
+        scanf(" %c", &black);
+        
+        if(white == black){
+            printf("\e[1;1H\e[2J");
+            printf("ERRO: As duas pecas nao podem ser iguais, tente de novo!");
+        } else {
+            loop = false;
+        }
+    }
 
+}
+
+void draw_menu()
+{
     
-    printf("              |");
-    for(int i = 0; i < width + 1; i++)
+    for(int i = 0; i < 41; i++)
         printf("-");
-    printf("|");
     printf("\n");
     
+    for(int i = 0; i < 11; i++){
+        for (int j = 0; j < 41; j++){
+            if (!pvp){
 
-
-    for (int y = 0; y < height; y++){
-        if(y - number_ID_on_board == 1){
-        printf("            %i |", number_ID_printed);
+                if (i == 4 && j == 17)
+                    printf("Jogar");
+                
+                if (i == 5 && j == 17)
+                    printf("Personalizar");
+                if (i == 6 && j == 17)
+                    printf("Creditos");
+                    
+                if (i == 7 && j == 17)
+                    printf("Exit");
+                
+            }
+            else
+            {
+                if (i == 4 && j == 17)
+                    printf("PVP");
+                if (i == 5 && j == 17)
+                    printf("CPU");
+                if (i == 6 && j == 17)
+                    printf("Voltar");
+            }
+            
+            if (i == pointer && j == 16)
+                printf("->");
+            
+            printf(" ");
         }
-        else
-        {
-            printf("              |");
+        printf("\n");
+    }
+    
+    for(int i = 0; i < 41; i++)
+        printf("-");
+    printf("\n\n");
+    
+    scanf(" %c", &point);
+    
+    switch (point) {
+        case 'w':
+            if(pointer != 4)
+                pointer--;
+            break;
+        case 'W':
+            if(pointer != 4)
+                pointer--;
+            break;
+        case 's':
+            if(pointer != 7)
+                pointer++;
+            break;
+        case 'S':
+            if(pointer != 7)
+                pointer++;
+            break;
+        case 'k':
+            if (!pvp){
+                if(pointer == 4)
+                    pvp = true;
+                if (pointer == 5)
+                    draw_personalizar();
+                if(pointer == 6)
+                    creditos();
+                if(pointer == 7)
+                    running = false;
+            } else
+            {
+                if(pointer == 4)
+                    play();
+                if (pointer == 5){
+                    pvp = false;
+                    play();
+                }
+                if(pointer == 6){
+                    pvp = false;
+                    pointer = 4;
+                }
+                }
+            break;
+        case 'K':
+            if (!pvp){
+                if(pointer == 4)
+                    pvp = true;
+                if (pointer == 5)
+                    draw_personalizar();
+                if(pointer == 6)
+                    creditos();
+                if(pointer == 7)
+                    running = false;
+            } else
+            {
+                if(pointer == 4)
+                    play();
+                if (pointer == 5){
+                    pvp = false;
+                    play();
+                }
+                if(pointer == 6){
+                    pvp = false;
+                    pointer = 4;
+                }
+                 
+            }
+            break;
+        default:
+            printf("ERROR... \n Aperte 'w' para movimentar a seta para cima e 's' para movimentar seta para baixo");
+            break;
+    }
+    printf("\n\n\n%i\n\n\n", pointer);
+    
+}
+
+void play(){
+    draw_map();
+    running_game = true;
+
+     while(running_game)
+     {
+        printf("\e[1;1H\e[2J");
+        present_map();
+        move_piece_W();
+        printf("\n\n\n Black eaten = %i ", black_pieces_eaten);
+        
+        if(black_pieces_eaten == 12){
+            printf("            RAN BY");
+            running_game = false;
+            winner = true;
+            game_over();
+        }
+         
+        else {
+            printf("\e[1;1H\e[2J");
+            present_map();
+            move_piece_B();
+            printf("\n\n\n White eaten = %i ", white_pieces_eaten);
+
+            if(white_pieces_eaten == 12){
+                running_game = false;
+                winner = false;
+                game_over();
+            }
+             
+        }
+     }
+}
+
+
+void move_piece_B()
+{
+    char letter, let;
+    int num_from, letter_from, num_to, letter_to;
+    int loop = 0;
+    permit = false;
+    if (pvp){
+    while (!permit){
+        do {
+            printf("MOVIMENTO DA PECA PRETA:\n");
+            printf ("Escolhe uma peca:    ");
+                  scanf(" %c", &letter);
+                  scanf(" %i", &num_from);
+            
+           switch (letter) {
+               case 'A':
+                   letter_from = 13;
+                   loop++;
+                   break;
+               case 'B':
+                   letter_from = 23;
+                   loop++;
+                   break;
+               case 'C':
+                   letter_from = 33;
+                   loop++;
+                   break;
+               case 'D':
+                   letter_from = 43;
+                   loop++;
+                   break;
+               case 'E':
+                   letter_from = 53;
+                   loop++;
+                   break;
+               case 'F':
+                   letter_from = 63;
+                   loop++;
+                   break;
+               case 'G':
+                   letter_from = 73;
+                   loop++;
+                   break;
+               case 'H':
+                   letter_from = 83;
+                   loop++;
+                   break;
+               default:
+                   break;
+           }
+        
+            num_from = (num_from - 1) * 4 + 2;
+
+
+
+        printf("\nEscolha o Destino: ");
+        scanf(" %c", &let);
+        scanf(" %i", &num_to);
+        num_to = (num_to - 1) * 4 + 2;
+
+        switch (let) {
+            case 'A':
+                letter_to = 13;
+                loop++;
+                break;
+            case 'B':
+                letter_to = 23;
+                loop++;
+                break;
+            case 'C':
+                letter_to = 33;
+                loop++;
+                break;
+            case 'D':
+                letter_to = 43;
+                loop++;
+                break;
+            case 'E':
+                letter_to = 53;
+                loop++;
+                break;
+            case 'F':
+                letter_to = 63;
+                loop++;
+                break;
+            case 'G':
+                letter_to = 73;
+                loop++;
+                break;
+            case 'H':
+                letter_to = 83;
+                loop++;
+                break;
+            default:
+                loop = 0;
+                printf("1");
+
+                break;
+           }
+        
+            if ( board[num_from][letter_from] == black){
+                   board[num_from][letter_from] = ' ';
+            } else {
+                loop = 0;
+                printf("1");
+            }
+                
+            if (board[num_to][letter_to] != ' '){
+                loop = 0;
+                printf("2");
+            }
+            
+            if (loop == 0){
+                printf("\e[1;1H\e[2J");
+                present_map();
+                printf("\n\nMovimento Nao Permitido\n\n");
+            }
+        
+        } while(loop == 0);
+        loop = 0;
+        
+    
+        if(num_to - num_from == 8 || num_from - num_to == 8){
+            if (board[num_to - 4] [letter_to + 10] == white){
+                board[num_to][letter_to] = black;
+                board[num_to - 4][letter_to + 10] = ' ';
+                white_pieces_eaten++;
+                permit = true;
+            }
+            else if (board[num_to - 4] [letter_to - 10] == white){
+                board[num_to][letter_to] = black;
+                board[num_to - 4][letter_to - 10] = ' ';
+                white_pieces_eaten++;
+                permit = true;
+            }
         }
         
-        for (int x = 0; x < width; x++){
+        else {
+            if(letter_to - letter_from == 10 ||letter_from - letter_to  == 10){
+                if( num_to >= num_from){
+                    board[num_to][letter_to] = black;
+                    permit = true;
+                } else {
+                    board[num_from][letter_from] = black;
+                    printf("\e[1;1H\e[2J");
+                    present_map();
+                }
+            } else {
+                board[num_from][letter_from] = black;
+                printf("\e[1;1H\e[2J");
+                present_map();
+            }
+        }
+    }}
+    else {
+        int pc, pc_from, pc_to;
+        bool test = false;
+        int change, arr_can_move_localizer =0, arr_can_eat = 0;
+        bool pc_can_eat;
+        
+        sleep(2);
+        
+        while (!test){
+            int can_move[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
+            int can_eat[12] = { 0,0,0,0,0,0,0,0,0,0,0,0};
             
-            switch(board_color_sequence){
-               
-                case 0:
-                    if(squares < black_square){
-                        if (w_location_Y[w_locateY] == y && w_location_X[w_locateX] == x)
-                        {
-                            printf("%c", white_piece);
-                            w_locateX++;
-                            w_locateY++;
-                        } else if (b_location_Y[b_locateY] == y && b_location_X[b_locateX] == x)
-                        {
-                            printf("%c", black_piece);
-                            b_locateX++;
-                            b_locateY++;
-                        
+            for (int i = 0; i <12; i++)
+                printf("%i  -  PC LOCATION: %i//%i\n",i, pc_location[i][0], pc_location[i][1]);
+            
+            for(int i = 1; i < 12; i++){
+                if(pc_location[i][0] < pc_location[i - 1][0]){
+                    change = pc_location[i][0];
+                    pc_location[i][0] = pc_location[i -1][0];
+                    pc_location[i - 1][0] = change;
+                    
+                    change = pc_location[i][1];
+                    pc_location[i][1] = pc_location[i - 1][1];
+                    pc_location[i - 1][1] = change;
+                    i -=i;
+                }
+            }
+            
+            for(int i = 2; i <32; i+=4)
+                for(int j = 13; j <93; j+=10)
+                    for(int x = 0; x <12; x++)
+                        if(pc_location[x][0] == i && pc_location[x][1] == j){
+                            if(board[i][j] == ' '){
+                                pc_location[x][0] = -10;
+                                pc_location[x][1] = -10;
+                            }
+                            else if (board[i][j] == black){
+                                if(board[i + 4][j + 10] == ' ' || board[i + 4][ j - 10] == ' '){
+                                    if (j - 10 > 10){
+                                    can_move[arr_can_move_localizer] = x;
+                                    arr_can_move_localizer++;
+                                    }
+                                }
+                                
+                                if(board[i + 4][j + 10] == white && board[i + 8][j + 20] == ' '){
+                                    if (j - 10 > 2){
+                                        can_eat[arr_can_eat] = x;
+                                        arr_can_eat++;
+                                        pc_can_eat = true;
+                                    }
+                                } else if (board[i + 4][ j - 10] == white && board[i + 8][j - 20] == ' ')
+                                {
+                                    if (j - 10 > 2){
+                                        if(j !=23){
+                                            can_eat[arr_can_eat] = x;
+                                            arr_can_eat++;
+                                            pc_can_eat = true;
+                                        }
+                                    }
+                                }
+                            }
                         }
-                        else
-                        {
-           				 	printf(" ");
-           				 }
-                        
-                    }
-                    else
-                    {
-                        printf("/");
-                    }
-                    
-                    squares++;
-                    
-                    if (squares == loop_squares)
-                        squares-=squares;
-                    break;
-                    
-                case 1:
-                    if(squares < black_square){
-                        printf("/");
-                    } else {
-                    //white squares
-                    if (w_location_Y[w_locateY] == y && w_location_X[w_locateX] == x)
-                    {
-                        printf("%c", white_piece);
-                        w_locateX++;
-                        w_locateY++;
-                    } else if (b_location_Y[b_locateY] == y && b_location_X[b_locateX] == x)
-                    {
-                        printf("%c", black_piece);
-                        b_locateX++;
-                        b_locateY++;
-                    
-                    }
-                        else
-                    {
-                        printf(" ");
+            for (int i = 0; i <12; i++)
+                printf("Can Eat:%i\n", can_eat[i]);
+            
+            for (int i = 0; i <12; i++)
+                printf("Can Move:%i\n", can_move[i]);
+            printf("\n\n\n");
+            for (int i = 0; i <12; i++)
+                printf("%i  -  PC LOCATION: %i//%i\n",i, pc_location[i][0], pc_location[i][1]);
+
+            
+            
+            if(pc_can_eat){
+                srand(time(NULL));
+                
+                int random_eater = rand()%arr_can_eat;
+                
+                if(board[pc_location[can_eat[random_eater]][0] + 4] [pc_location[can_eat[random_eater]][1] + 10] == white && pc_location[can_eat[random_eater]][1] < 70){
+                    if(board[pc_location[can_eat[random_eater]][0] + 8] [pc_location[can_eat[random_eater]][1] + 20] == ' '){
+                        board[pc_location[can_eat[random_eater]][0] + 8] [pc_location[can_eat[random_eater]][1] + 20] = black;
+                        board[pc_location[can_eat[random_eater]][0] + 4] [pc_location[can_eat[random_eater]][1] + 10] = ' ';
+                        board[pc_location[can_eat[random_eater]][0]][pc_location[can_eat[random_eater]][1]] = ' ';
+                        pc_location[can_eat[random_eater]][0] += 8;
+                        pc_location[can_eat[random_eater]][1] +=20;
+                        white_pieces_eaten++;
+                        test = true;
+                        }
+                } else if (board[pc_location[can_eat[random_eater]][0] + 4] [pc_location[can_eat[random_eater]][1] - 10] == white && pc_location[can_eat[random_eater]][1] > 30){
+                    if(board[pc_location[can_eat[random_eater]][0] + 8] [pc_location[can_eat[random_eater]][1] - 20] == ' '){
+                        board[pc_location[can_eat[random_eater]][0] + 8] [pc_location[can_eat[random_eater]][1] - 20] = black;
+                        board[pc_location[can_eat[random_eater]][0] + 4] [pc_location[can_eat[random_eater]][1] - 10] = ' ';
+                        board[pc_location[can_eat[random_eater]][0]][pc_location[can_eat[random_eater]][1]] = ' ';
+                        pc_location[can_eat[random_eater]][0] += 8;
+                        pc_location[can_eat[random_eater]][1] -=20;
+                        white_pieces_eaten++;
+                        test = true;
                     }
                 }
+            } else
+            {
+                int random_move = rand()%arr_can_move_localizer;
                 
-                squares++;
-                        
-                if (squares == loop_squares)
-                squares-=squares;
-                    
+                if (board[pc_location[can_move[random_move]][0] + 4] [pc_location[can_move[random_move]][1] + 10] == ' '){
+                    board[pc_location[can_move[random_move]][0] + 4] [pc_location[can_move[random_move]][1] + 10] = black;
+                    board[pc_location[can_move[random_move]][0]][pc_location[can_move[random_move]][1]] = ' ';
+                    pc_location[can_move[random_move]][0] += 4;
+                    pc_location[can_move[random_move]][1] +=10;
+                    test = true;
+                }
+                else if (board[pc_location[can_move[random_move]][0] + 4] [pc_location[can_move[random_move]][1] - 10] == ' ' && pc_location[can_move[random_move]][1] > 10){
+                    board[pc_location[can_move[random_move]][0] + 4] [pc_location[can_move[random_move]][1] - 10] = black;
+                    board[pc_location[can_move[random_move]][0]][pc_location[can_move[random_move]][1]] = ' ';
+                    pc_location[can_move[random_move]][0] += 4;
+                    pc_location[can_move[random_move]][1] -=10;
+                    test = true;
+                }
             }
-                    
-        }
-        printf(" |");
-        printf("\n");
-
-        line++;
-    
-        if(line == 3){
-            printf("              |");
-            for(int i = 0; i < width + 1; i++)
-                printf("-");
-            printf("|");
-            line-=line;
-            final_line++;
-            printf("\n");
-            
-            if(board_color_sequence == 1){
-                board_color_sequence-=board_color_sequence;
-            } else {
-                board_color_sequence++;
-            }
-            
-            number_ID_on_board+=3;
-            number_ID_printed++;
         }
     }
-    printf("               ");
-    for(int i = 0; i < 64; i++)
-        printf("%c", letter_ID_on_board[i]);
-              
-    printf("\n\n\n\n");
-
 }
 
-void creating_letters_ID_on_board()
+void move_piece_W()
 {
-    int attaches_letters = 4, alphabet_identifier = 0;
+    char letter, let;
+    int num_from, letter_from, num_to, letter_to;
+    int loop = 0;
+    permit = false;
+    int infomation_from, infomation_to;
+    bool existant_location = true;
 
-    alphabet[0] = 'A';
-    alphabet[1] = 'B'; alphabet[2] = 'C',alphabet[3] = 'D',alphabet[4] = 'E',alphabet[5] = 'F' ,alphabet[6] = 'G', alphabet[7] = 'H';
- 
+    while (!permit){
+    do {
+        printf("MOVIMENTO DA PECA BRANCA:\n");
+        
+        printf ("Ecolha uma Peca:  ");
+        scanf(" %c", &letter);
+        scanf(" %i", &num_from);
+        infomation_from = num_from;
+        num_from = (num_from - 1) * 4 + 2;
 
-    for(int i = 0; i < 64; i++)
-    {
-        if(attaches_letters == 0){
-            letter_ID_on_board[i] = alphabet[alphabet_identifier];
-            alphabet_identifier++;
-            attaches_letters+= 7;
-        } else
+                
+        switch (letter) {
+            case 'A':
+                letter_from = 13;
+                loop++;
+                break;
+            case 'B':
+                letter_from = 23;
+                loop++;
+                break;
+            case 'C':
+                letter_from = 33;
+                loop++;
+                break;
+            case 'D':
+                letter_from = 43;
+                loop++;
+                break;
+            case 'E':
+                letter_from = 53;
+                loop++;
+                break;
+            case 'F':
+                letter_from = 63;
+                loop++;
+                break;
+            case 'G':
+                letter_from = 73;
+                loop++;
+                break;
+            case 'H':
+                letter_from = 83;
+                loop++;
+                break;
+            default:
+                break;
+        }
+                
+        
+
+        printf("\nEscolha o Destino: ");
+        scanf(" %c", &let);
+        scanf(" %i", &num_to);
+        infomation_to = num_to;
+
+        num_to = (num_to - 1) * 4 + 2;
+
+        switch (let) {
+            case 'A':
+                letter_to = 13;
+                loop++;
+                break;
+            case 'B':
+                letter_to = 23;
+                loop++;
+                break;
+            case 'C':
+                letter_to = 33;
+                loop++;
+                break;
+            case 'D':
+                letter_to = 43;
+                loop++;
+                break;
+            case 'E':
+                letter_to = 53;
+                loop++;
+                break;
+            case 'F':
+                letter_to = 63;
+                loop++;
+                break;
+            case 'G':
+                letter_to = 73;
+                loop++;
+                break;
+            case 'H':
+                letter_to = 83;
+                loop++;
+                break;
+            default:
+                loop = 0;
+                break;
+            }
+                
+            if ( board[num_from][letter_from] == white){
+                board[num_from][letter_from] = ' ';
+            } else {
+                loop = 0;
+                printf("1");
+            }
+            
+            if ( board[num_from][letter_from] == '/'){
+                existant_location = false;
+            }
+
+                        
+            if (board[num_to][letter_to] == white){
+                loop = 0;
+                printf("2");
+            }
+                
+            if (loop == 0){
+                printf("\e[1;1H\e[2J");
+                printf("\n\n         MOVIMENTO NAO PERMITIDO\n\n         VOCE TENTOU MOVIMENTAR: %c%i -> %c%i\n", letter, infomation_from, let, infomation_to);
+                if(existant_location){
+                    board[num_from][letter_from] = white;
+                }
+                present_map();
+            }
+                
+        } while(loop == 0);
+        loop = 0;
+        
+        if(num_from - num_to == 8 || num_to - num_from == 8)
         {
-            letter_ID_on_board[i] = ' ';
-            attaches_letters--;
+            if (letter_from - letter_to == 20){
+                if (board[num_from - 4][letter_from - 10] == black){
+                    board[num_to][letter_to] = white;
+                    board[num_from - 4][letter_from - 10] = ' ';
+                    black_pieces_eaten++;
+                    permit = true;
+
+                }
+                
+            }
+            else if (letter_to - letter_from  == 20){
+                if(board[num_from - 4][letter_from + 10] == black){
+                    board[num_to][letter_to] = white;
+                    board[num_from - 4][letter_from + 10] = ' ';
+                    black_pieces_eaten++;
+                    permit = true;
+                }
+            }
+        }
+
+        else {
+            if(letter_to - letter_from == 10 ||letter_from - letter_to  == 10){
+                if( num_to <= num_from){
+                    board[num_to][letter_to] = white;
+                    permit = true;
+                } else {
+                    board[num_from][letter_from] = white;
+                    printf("\e[1;1H\e[2J");
+                    present_map();
+                    printf("\n\nMOVE INTERRUPTED\n\n");
+                }
+            } else {
+                board[num_from][letter_from] = white;
+                printf("\n\n MOVE NOT PERMITED!\n\n");
+                printf("\e[1;1H\e[2J");
+                present_map();
+            }
         }
     }
 }
 
+void draw_map()
+{
+    char arr[34][95] = {{"       ----------------------------------------------------------------------------------"},
+                        {"      | //////////          //////////          //////////          //////////           |"},
+                        {"1     | //////////          //////////          //////////          //////////           |"},
+                        {"      | //////////          //////////          //////////          //////////           |"},
+                        {"       ---------------------------------------------------------------------------------- "},
+                        {"      |           //////////          //////////          //////////          ////////// |"},
+                        {"2     |           //////////          //////////          //////////          ////////// |"},
+                        {"      |           //////////          //////////          //////////          ////////// |"},
+                        {"       ---------------------------------------------------------------------------------- "},
+                        {"      | //////////          //////////          //////////          //////////           |"},
+                        {"3     | //////////          //////////          //////////          //////////           |"},
+                        {"      | //////////          //////////          //////////          //////////           |"},
+                        {"       ---------------------------------------------------------------------------------- "},
+                        {"      |           //////////          //////////          //////////          ////////// |"},
+                        {"4     |           //////////          //////////          //////////          ////////// |"},
+                        {"      |           //////////          //////////          //////////          ////////// |"},
+                        {"       ---------------------------------------------------------------------------------- "},
+                        {"      | //////////          //////////          //////////          //////////           |"},
+                        {"5     | //////////          //////////          //////////          //////////           |"},
+                        {"      | //////////          //////////          //////////          //////////           |"},
+                        {"       ---------------------------------------------------------------------------------- "},
+                        {"      |           //////////          //////////          //////////          ////////// |"},
+                        {"6     |           //////////          //////////          //////////          ////////// |"},
+                        {"      |           //////////          //////////          //////////          ////////// |"},
+                        {"       ---------------------------------------------------------------------------------- "},
+                        {"      | //////////          //////////          //////////          //////////           |"},
+                        {"7     | //////////          //////////          //////////          //////////           |"},
+                        {"      | //////////          //////////          //////////          //////////           |"},
+                        {"       ---------------------------------------------------------------------------------- "},
+                        {"      |           //////////          //////////          //////////          ////////// |"},
+                        {"8     |           //////////          //////////          //////////          ////////// |"},
+                        {"      |           //////////          //////////          //////////          ////////// |"},
+                        {"       ---------------------------------------------------------------------------------- "},
+                        {"            A          B         C         D         E         F         G         H      "},
+                        };
+    
+    for (int i =0; i < 34; i++)
+        for (int j = 0; j < 95; j++){
+            board[i][j] = arr[i][j];
+        }
+
+    
+    board[2][23] = black;board[2][43] = black;board[2][63] = black;board[2][83] = black;
+    board[6][13] = black;board[6][33] = black;board[6][53] = black;board[6][73] = black;
+    board[10][23] = black;board[10][43] = black;board[10][63] = black;board[10][83] = black;
+
+
+    board[22][13] = white;board[22][33] = white;board[22][53] = white;board[22][73] = white;
+    board[26][23] = white;board[26][43] = white;board[26][63] =white;board[26][83] = white;
+    board[30][13] = white;board[30][33] = white;board[30][53] = white;board[30][73] = white;
+
+
+}
+
+void present_map()
+{
+    for (int i = 0; i < 34; i++){
+        printf("%s\n",board[i]);
+    }
+}
+
+void present_menu()
+{
+    for (int i = 0; i < 11; i++){
+        printf("%s\n",menu[i]);
+    }
+}
+
+void game_over()
+{
+    bool credito = true;
+    typedef struct
+    {
+        char *message;
+
+    } op;
+    op message1 = {"YOU WIN!!!!!!"};
+    if(!pvp){
+        if (!winner)
+        {
+            message1.message = "COMPUTER WINS!!!!!";
+        }
+    } else
+    {
+        message1.message = "WHITE WINS!!!!!!";
+        if (!winner)
+        {
+            message1.message = "BLACK WINS!!!!!";
+        }
+    }
+    while (credito){
+        
+            printf("\e[1;1H\e[2J");
+            for(int i = 0; i < 41; i++)
+                   printf("-");
+               printf("\n");
+               
+            for(int i = 0; i < 11; i++){
+                for (int j = 0; j < 41; j++){
+                       
+                    if (i == 4 && j ==12)
+                        printf("%s", message1.message);
+                       
+                    if (i == 6 && j ==7)
+                        printf("->");
+                       
+                    if (i == 6 && j ==7)
+                        printf ("Voltar Para Menu Principal");
+                       
+                    printf(" ");
+                }
+                printf("\n");
+            }
+               
+            for(int i = 0; i < 41; i++)
+                printf("-");
+            
+            printf("\n\n");
+
+            scanf(" %c", &point);
+            
+            if(point == 'k' || point == 'K')
+                credito = false;
+                
+    }
+    pvp = false;
+    pointer = 4;
+}
