@@ -4,130 +4,73 @@
 #include <unistd.h>
 #include <stdbool.h>
 
+// Letters that will represent the pieces
 char white = 'B';
 char black = 'P';
 
+//Count on pieces eaten
 int black_pieces_eaten = 0;
 int white_pieces_eaten = 0;
 
-void draw_map();
-void draw_menu();
-void draw_personalizar();
+//Draws and presents the board
+char board[34][95];
+void draw_board();
+void present_board();
 
-void present_map();
+//Menu and menu options
+void credit();
+void present_personalize_pieces();
 void present_menu();
+
+//Method to move pieces
 void move_piece_W();
 void move_piece_B();
+
+//Runs the game
 void play();
-void GAME();
-void creditos();
-void opening();
-void game_over();
-
-
-char board[34][95];
-char menu[11][41];
-
-bool permit;
-bool running = true;
 bool running_game = false;
+
+//Begins the algorithm
+void GAME();
+bool running = true;
+
+//Instructions to navigate the menu
+void navigation_instructions();
+
+//Option for PLYAER versus PLAYER or PLAYER versus PC & location for pc pieces
 bool pvp = false;
-bool winner;
-
-int pointer = 4;
-
 int pc_location[12][2] = {
     {2,23 },    {2,43 },    {2,63 },    {2,83 },
     {6,13 },    {6,33 },    {6,53 },    {6,73 },
     {10,23},    {10,43},    {10,63},    {10,83}
 };
 
-char point;
+//Ends game & finds winner
+void game_over();
+bool winner;
 
+//Menu navigation
+int pointer = 4;
+char user_input;
+
+
+//Main method
 int main()
 
 {
-    opening();
+    navigation_instructions();
     GAME();
     return 0;
-   
 }
-
-void opening()
+void GAME()
 {
-    printf("\e[1;1H\e[2J");
-    printf("\n\n\nBem Vindo ao jogo de dama!\n\nPara navegar o menu principal usa os inputs: \n        'w' (para mover para cima)   \n        's' (para mover para baixo)\n        'k' (para confirmar a opcao)\n\n Dê o input 'k' para continuar\n");
-    scanf("%c", &point);
-    printf("\e[1;1H\e[2J");
-}
-void creditos()
-{
-    bool credito = true;
-    while (credito){
-        printf("\e[1;1H\e[2J");
-        for(int i = 0; i < 41; i++)
-               printf("-");
-           printf("\n");
-           
-           for(int i = 0; i < 11; i++){
-               for (int j = 0; j < 41; j++){
-                   
-                   if (i == 4 && j ==9)
-                       printf("Jogo Criado por Michael Lima");
-                   
-                   if (i == 6 && j ==17)
-                       printf("->");
-                   
-                   if (i == 6 && j ==17)
-                       printf ("Voltar");
-                   
-                   printf(" ");
-               }
-               printf("\n");
-           }
-           
-        for(int i = 0; i < 41; i++)
-            printf("-");
-        
-        printf("\n\n");
-
-        scanf(" %c", &point);
-        
-        if(point == 'k' || point == 'K')
-            credito = false;
-    }
-}
-
-void GAME(){
-    
     while (running){
-        draw_menu();
+        present_menu();
         printf("\e[1;1H\e[2J");
     }
 }
 
-void draw_personalizar()
-{
-    bool loop = true;
-    printf("\e[1;1H\e[2J");
-    while(loop){
-        printf("\n\n\nPersonalize a peca BRANCA. Como que você deseja que a peca branca seja?\n Escolhe uma letra ou numero:\n\n\n\n");
-        scanf(" %c", &white);
-        printf("\e[1;1H\e[2J");
-        printf("\n\n\n\nPersonalize a peca PRETA. Como que você deseja que a peca branca seja?\n Escolhe uma letra ou numero:\n\n\n\n");
-        scanf(" %c", &black);
-        
-        if(white == black){
-            printf("\e[1;1H\e[2J");
-            printf("ERRO: As duas pecas nao podem ser iguais, tente de novo!");
-        } else {
-            loop = false;
-        }
-    }
-
-}
-
-void draw_menu()
+void present_menu()
 {
     
     for(int i = 0; i < 41; i++)
@@ -172,9 +115,9 @@ void draw_menu()
         printf("-");
     printf("\n\n");
     
-    scanf(" %c", &point);
+    scanf(" %c", &user_input);
     
-    switch (point) {
+    switch (user_input) {
         case 'w':
             if(pointer != 4)
                 pointer--;
@@ -196,9 +139,9 @@ void draw_menu()
                 if(pointer == 4)
                     pvp = true;
                 if (pointer == 5)
-                    draw_personalizar();
+                    present_personalize_pieces();
                 if(pointer == 6)
-                    creditos();
+                    credit();
                 if(pointer == 7)
                     running = false;
             } else
@@ -220,9 +163,9 @@ void draw_menu()
                 if(pointer == 4)
                     pvp = true;
                 if (pointer == 5)
-                    draw_personalizar();
+                    present_personalize_pieces();
                 if(pointer == 6)
-                    creditos();
+                    credit();
                 if(pointer == 7)
                     running = false;
             } else
@@ -244,23 +187,21 @@ void draw_menu()
             printf("ERROR... \n Aperte 'w' para movimentar a seta para cima e 's' para movimentar seta para baixo");
             break;
     }
-    printf("\n\n\n%i\n\n\n", pointer);
-    
+    printf("\n\n\n%i\n\n\n", pointer);   
 }
 
-void play(){
-    draw_map();
+void play()
+{
+    draw_board();
     running_game = true;
 
      while(running_game)
      {
         printf("\e[1;1H\e[2J");
-        present_map();
+        present_board();
         move_piece_W();
-        printf("\n\n\n Black eaten = %i ", black_pieces_eaten);
         
         if(black_pieces_eaten == 12){
-            printf("            RAN BY");
             running_game = false;
             winner = true;
             game_over();
@@ -268,9 +209,8 @@ void play(){
          
         else {
             printf("\e[1;1H\e[2J");
-            present_map();
+            present_board();
             move_piece_B();
-            printf("\n\n\n White eaten = %i ", white_pieces_eaten);
 
             if(white_pieces_eaten == 12){
                 running_game = false;
@@ -282,144 +222,153 @@ void play(){
      }
 }
 
-
 void move_piece_B()
 {
     char letter, let;
     int num_from, letter_from, num_to, letter_to;
-    int loop = 0;
-    permit = false;
+    bool loop = true;
+    bool permit = false;
+    int infomation_from, infomation_to;
+    bool existant_location = true;
     if (pvp){
+
     while (!permit){
-        do {
-            printf("MOVIMENTO DA PECA PRETA:\n");
-            printf ("Escolhe uma peca:    ");
-                  scanf(" %c", &letter);
-                  scanf(" %i", &num_from);
-            
-           switch (letter) {
-               case 'A':
-                   letter_from = 13;
-                   loop++;
-                   break;
-               case 'B':
-                   letter_from = 23;
-                   loop++;
-                   break;
-               case 'C':
-                   letter_from = 33;
-                   loop++;
-                   break;
-               case 'D':
-                   letter_from = 43;
-                   loop++;
-                   break;
-               case 'E':
-                   letter_from = 53;
-                   loop++;
-                   break;
-               case 'F':
-                   letter_from = 63;
-                   loop++;
-                   break;
-               case 'G':
-                   letter_from = 73;
-                   loop++;
-                   break;
-               case 'H':
-                   letter_from = 83;
-                   loop++;
-                   break;
-               default:
-                   break;
-           }
+    do {
+        printf("MOVIMENTO DA PECA present_board:\n");
         
-            num_from = (num_from - 1) * 4 + 2;
+        printf ("Ecolha uma Peca:  ");
+        scanf(" %c", &letter);
+        scanf(" %i", &num_from);
+        infomation_from = num_from;
+        num_from = (num_from - 1) * 4 + 2;
 
-
+                
+        switch (letter) {
+            case 'A':
+                letter_from = 13;
+                loop = false;
+                break;
+            case 'B':
+                letter_from = 23;
+                loop = false;
+                break;
+            case 'C':
+                letter_from = 33;
+                loop = false;
+                break;
+            case 'D':
+                letter_from = 43;
+                loop = false;
+                break;
+            case 'E':
+                letter_from = 53;
+                loop = false;
+                break;
+            case 'F':
+                letter_from = 63;
+                loop = false;
+                break;
+            case 'G':
+                letter_from = 73;
+                loop = false;
+                break;
+            case 'H':
+                letter_from = 83;
+                loop = false;
+                break;
+            default:
+                break;
+        }
+                
+        
 
         printf("\nEscolha o Destino: ");
         scanf(" %c", &let);
         scanf(" %i", &num_to);
+        infomation_to = num_to;
+
         num_to = (num_to - 1) * 4 + 2;
 
         switch (let) {
             case 'A':
                 letter_to = 13;
-                loop++;
+                loop = false;
                 break;
             case 'B':
                 letter_to = 23;
-                loop++;
+                loop = false;
                 break;
             case 'C':
                 letter_to = 33;
-                loop++;
+                loop = false;
                 break;
             case 'D':
                 letter_to = 43;
-                loop++;
+                loop = false;
                 break;
             case 'E':
                 letter_to = 53;
-                loop++;
+                loop = false;
                 break;
             case 'F':
                 letter_to = 63;
-                loop++;
+                loop = false;
                 break;
             case 'G':
                 letter_to = 73;
-                loop++;
+                loop = false;
                 break;
             case 'H':
                 letter_to = 83;
-                loop++;
+                loop = false;
                 break;
             default:
-                loop = 0;
-                printf("1");
-
+                loop = true;
                 break;
-           }
-        
-            if ( board[num_from][letter_from] == black){
-                   board[num_from][letter_from] = ' ';
-            } else {
-                loop = 0;
-                printf("1");
             }
                 
-            if (board[num_to][letter_to] != ' '){
-                loop = 0;
-                printf("2");
+            if ( board[num_from][letter_from] == black){
+                board[num_from][letter_from] = ' ';
+                loop = true;
+            } else {
+                loop = true;
+                existant_location = false;
             }
-            
-            if (loop == 0){
+                
+            if (loop){
                 printf("\e[1;1H\e[2J");
-                present_map();
-                printf("\n\nMovimento Nao Permitido\n\n");
+                printf("\n\n         MOVIMENTO NAO PERMITIDO\n\n         VOCE TENTOU MOVIMENTAR: %c%i -> %c%i\n", letter, infomation_from, let, infomation_to);
+                if(existant_location){
+                    board[num_from][letter_from] = black;
+                }
+                present_board();
             }
+                
+        } while(loop);
+        loop = true;
         
-        } while(loop == 0);
-        loop = 0;
-        
-    
-        if(num_to - num_from == 8 || num_from - num_to == 8){
-            if (board[num_to - 4] [letter_to + 10] == white){
-                board[num_to][letter_to] = black;
-                board[num_to - 4][letter_to + 10] = ' ';
-                white_pieces_eaten++;
-                permit = true;
+        if(num_from - num_to == 8 || num_to - num_from == 8)
+        {
+            if (letter_from > letter_to){
+                if (board[num_from + 4][letter_from - 10] == white){
+                    board[num_to][letter_to] = black;
+                    board[num_from + 4][letter_from - 10] = ' ';
+                    white_pieces_eaten++;
+                    permit = true;
+
+                }
+                
             }
-            else if (board[num_to - 4] [letter_to - 10] == white){
-                board[num_to][letter_to] = black;
-                board[num_to - 4][letter_to - 10] = ' ';
-                white_pieces_eaten++;
-                permit = true;
+            else if (letter_from  < letter_to){
+                if(board[num_from + 4][letter_from + 10] == white){
+                    board[num_to][letter_to] = black;
+                    board[num_from + 4][letter_from + 10] = ' ';
+                    white_pieces_eaten++;
+                    permit = true;
+                }
             }
         }
-        
+
         else {
             if(letter_to - letter_from == 10 ||letter_from - letter_to  == 10){
                 if( num_to >= num_from){
@@ -428,12 +377,14 @@ void move_piece_B()
                 } else {
                     board[num_from][letter_from] = black;
                     printf("\e[1;1H\e[2J");
-                    present_map();
+                    present_board();
+                    printf("\n\nMOVE INTERRUPTED\n\n");
                 }
             } else {
                 board[num_from][letter_from] = black;
+                printf("\n\n MOVE NOT PERMITED!\n\n");
                 printf("\e[1;1H\e[2J");
-                present_map();
+                present_board();
             }
         }
     }}
@@ -563,8 +514,8 @@ void move_piece_W()
 {
     char letter, let;
     int num_from, letter_from, num_to, letter_to;
-    int loop = 0;
-    permit = false;
+    bool loop = true;
+    bool permit = false;
     int infomation_from, infomation_to;
     bool existant_location = true;
 
@@ -582,35 +533,35 @@ void move_piece_W()
         switch (letter) {
             case 'A':
                 letter_from = 13;
-                loop++;
+                loop = false;
                 break;
             case 'B':
                 letter_from = 23;
-                loop++;
+                loop = false;
                 break;
             case 'C':
                 letter_from = 33;
-                loop++;
+                loop = false;
                 break;
             case 'D':
                 letter_from = 43;
-                loop++;
+                loop = false;
                 break;
             case 'E':
                 letter_from = 53;
-                loop++;
+                loop = false;
                 break;
             case 'F':
                 letter_from = 63;
-                loop++;
+                loop = false;
                 break;
             case 'G':
                 letter_from = 73;
-                loop++;
+                loop = false;
                 break;
             case 'H':
                 letter_from = 83;
-                loop++;
+                loop = false;
                 break;
             default:
                 break;
@@ -628,69 +579,61 @@ void move_piece_W()
         switch (let) {
             case 'A':
                 letter_to = 13;
-                loop++;
+                loop = false;
                 break;
             case 'B':
                 letter_to = 23;
-                loop++;
+                loop = false;
                 break;
             case 'C':
                 letter_to = 33;
-                loop++;
+                loop = false;
                 break;
             case 'D':
                 letter_to = 43;
-                loop++;
+                loop = false;
                 break;
             case 'E':
                 letter_to = 53;
-                loop++;
+                loop = false;
                 break;
             case 'F':
                 letter_to = 63;
-                loop++;
+                loop = false;
                 break;
             case 'G':
                 letter_to = 73;
-                loop++;
+                loop = false;
                 break;
             case 'H':
                 letter_to = 83;
-                loop++;
+                loop = false;
                 break;
             default:
-                loop = 0;
+                loop = true;
                 break;
             }
                 
             if ( board[num_from][letter_from] == white){
                 board[num_from][letter_from] = ' ';
+                loop = true;
+
             } else {
-                loop = 0;
-                printf("1");
-            }
-            
-            if ( board[num_from][letter_from] == '/'){
+                loop = true;
                 existant_location = false;
             }
-
-                        
-            if (board[num_to][letter_to] == white){
-                loop = 0;
-                printf("2");
-            }
                 
-            if (loop == 0){
+            if (loop){
                 printf("\e[1;1H\e[2J");
                 printf("\n\n         MOVIMENTO NAO PERMITIDO\n\n         VOCE TENTOU MOVIMENTAR: %c%i -> %c%i\n", letter, infomation_from, let, infomation_to);
                 if(existant_location){
                     board[num_from][letter_from] = white;
                 }
-                present_map();
+                present_board();
             }
                 
-        } while(loop == 0);
-        loop = 0;
+        } while(loop);
+        loop = true;
         
         if(num_from - num_to == 8 || num_to - num_from == 8)
         {
@@ -722,20 +665,20 @@ void move_piece_W()
                 } else {
                     board[num_from][letter_from] = white;
                     printf("\e[1;1H\e[2J");
-                    present_map();
+                    present_board();
                     printf("\n\nMOVE INTERRUPTED\n\n");
                 }
             } else {
                 board[num_from][letter_from] = white;
                 printf("\n\n MOVE NOT PERMITED!\n\n");
                 printf("\e[1;1H\e[2J");
-                present_map();
+                present_board();
             }
         }
     }
 }
 
-void draw_map()
+void draw_board()
 {
     char arr[34][95] = {{"       ----------------------------------------------------------------------------------"},
                         {"      | //////////          //////////          //////////          //////////           |"},
@@ -787,21 +730,78 @@ void draw_map()
     board[22][13] = white;board[22][33] = white;board[22][53] = white;board[22][73] = white;
     board[26][23] = white;board[26][43] = white;board[26][63] =white;board[26][83] = white;
     board[30][13] = white;board[30][33] = white;board[30][53] = white;board[30][73] = white;
-
-
 }
 
-void present_map()
+void present_board()
 {
     for (int i = 0; i < 34; i++){
         printf("%s\n",board[i]);
     }
 }
 
-void present_menu()
+void present_personalize_pieces()
 {
-    for (int i = 0; i < 11; i++){
-        printf("%s\n",menu[i]);
+    bool loop = true;
+    printf("\e[1;1H\e[2J");
+    while(loop){
+        printf("\n\n\nPersonalize a peca BRANCA. Como que você deseja que a peca branca seja?\n Escolhe uma letra ou numero:\n\n\n\n");
+        scanf(" %c", &white);
+        printf("\e[1;1H\e[2J");
+        printf("\n\n\n\nPersonalize a peca PRETA. Como que você deseja que a peca branca seja?\n Escolhe uma letra ou numero:\n\n\n\n");
+        scanf(" %c", &black);
+        
+        if(white == black){
+            printf("\e[1;1H\e[2J");
+            printf("ERRO: As duas pecas nao podem ser iguais, tente de novo!");
+        } else {
+            loop = false;
+        }
+    }
+}
+
+void navigation_instructions()
+{
+    printf("\e[1;1H\e[2J");
+    printf("\n\n\nBem Vindo ao jogo de dama!\n\nPara navegar o menu principal usa os inputs: \n        'w' (para mover para cima)   \n        's' (para mover para baixo)\n        'k' (para confirmar a opcao)\n\n Dê o input 'k' para continuar\n");
+    scanf("%c", &user_input);
+    printf("\e[1;1H\e[2J");
+}
+
+void credit()
+{
+    bool credito = true;
+    while (credito){
+        printf("\e[1;1H\e[2J");
+        for(int i = 0; i < 41; i++)
+               printf("-");
+           printf("\n");
+           
+           for(int i = 0; i < 11; i++){
+               for (int j = 0; j < 41; j++){
+                   
+                   if (i == 4 && j ==9)
+                       printf("Created by Michael Lima");
+                   
+                   if (i == 6 && j ==17)
+                       printf("->");
+                   
+                   if (i == 6 && j ==17)
+                       printf ("Return");
+                   
+                   printf(" ");
+               }
+               printf("\n");
+           }
+           
+        for(int i = 0; i < 41; i++)
+            printf("-");
+        
+        printf("\n\n");
+
+        scanf(" %c", &user_input);
+        
+        if(user_input == 'k' || user_input == 'K')
+            credito = false;
     }
 }
 
@@ -844,7 +844,7 @@ void game_over()
                         printf("->");
                        
                     if (i == 6 && j ==7)
-                        printf ("Voltar Para Menu Principal");
+                        printf ("Return To Main Menu");
                        
                     printf(" ");
                 }
@@ -856,12 +856,14 @@ void game_over()
             
             printf("\n\n");
 
-            scanf(" %c", &point);
+            scanf(" %c", &user_input);
             
-            if(point == 'k' || point == 'K')
+            if(user_input == 'k' || user_input == 'K')
                 credito = false;
                 
     }
     pvp = false;
     pointer = 4;
 }
+
+
