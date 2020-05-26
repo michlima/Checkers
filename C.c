@@ -329,7 +329,6 @@ void move_piece_B()
                 
             if ( board[num_from][letter_from] == black){
                 board[num_from][letter_from] = ' ';
-                loop = true;
             } else {
                 loop = true;
                 existant_location = false;
@@ -616,8 +615,6 @@ void move_piece_W()
                 
             if ( board[num_from][letter_from] == white){
                 board[num_from][letter_from] = ' ';
-                loop = true;
-
             } else {
                 loop = true;
                 existant_location = false;
