@@ -25,6 +25,9 @@ void present_menu();
 //Method to move pieces
 void move_piece_W();
 void move_piece_B();
+int get_letter(char letter);
+bool loop = true;
+
 
 //Runs the game
 void play();
@@ -226,8 +229,8 @@ void move_piece_B()
 {
     char letter, let;
     int num_from, letter_from, num_to, letter_to;
-    bool loop = true;
     bool permit = false;
+    loop = true;
     int infomation_from, infomation_to;
     bool existant_location = true;
     if (pvp){
@@ -240,92 +243,19 @@ void move_piece_B()
         scanf(" %c", &letter);
         scanf(" %i", &num_from);
         infomation_from = num_from;
-        num_from = (num_from - 1) * 4 + 2;
-
-                
-        switch (letter) {
-            case 'A':
-                letter_from = 13;
-                loop = false;
-                break;
-            case 'B':
-                letter_from = 23;
-                loop = false;
-                break;
-            case 'C':
-                letter_from = 33;
-                loop = false;
-                break;
-            case 'D':
-                letter_from = 43;
-                loop = false;
-                break;
-            case 'E':
-                letter_from = 53;
-                loop = false;
-                break;
-            case 'F':
-                letter_from = 63;
-                loop = false;
-                break;
-            case 'G':
-                letter_from = 73;
-                loop = false;
-                break;
-            case 'H':
-                letter_from = 83;
-                loop = false;
-                break;
-            default:
-                break;
-        }
-                
         
+        num_from = (num_from - 1) * 4 + 2;
+        letter_from = get_letter(letter);
 
+                        
         printf("\nEscolha o Destino: ");
         scanf(" %c", &let);
         scanf(" %i", &num_to);
         infomation_to = num_to;
 
         num_to = (num_to - 1) * 4 + 2;
-
-        switch (let) {
-            case 'A':
-                letter_to = 13;
-                loop = false;
-                break;
-            case 'B':
-                letter_to = 23;
-                loop = false;
-                break;
-            case 'C':
-                letter_to = 33;
-                loop = false;
-                break;
-            case 'D':
-                letter_to = 43;
-                loop = false;
-                break;
-            case 'E':
-                letter_to = 53;
-                loop = false;
-                break;
-            case 'F':
-                letter_to = 63;
-                loop = false;
-                break;
-            case 'G':
-                letter_to = 73;
-                loop = false;
-                break;
-            case 'H':
-                letter_to = 83;
-                loop = false;
-                break;
-            default:
-                loop = true;
-                break;
-            }
+        letter_to = get_letter(let);
+        
                 
             if ( board[num_from][letter_from] == black){
                 board[num_from][letter_from] = ' ';
@@ -513,7 +443,7 @@ void move_piece_W()
 {
     char letter, let;
     int num_from, letter_from, num_to, letter_to;
-    bool loop = true;
+    loop = true;
     bool permit = false;
     int infomation_from, infomation_to;
     bool existant_location = true;
@@ -526,47 +456,12 @@ void move_piece_W()
         scanf(" %c", &letter);
         scanf(" %i", &num_from);
         infomation_from = num_from;
-        num_from = (num_from - 1) * 4 + 2;
-
-                
-        switch (letter) {
-            case 'A':
-                letter_from = 13;
-                loop = false;
-                break;
-            case 'B':
-                letter_from = 23;
-                loop = false;
-                break;
-            case 'C':
-                letter_from = 33;
-                loop = false;
-                break;
-            case 'D':
-                letter_from = 43;
-                loop = false;
-                break;
-            case 'E':
-                letter_from = 53;
-                loop = false;
-                break;
-            case 'F':
-                letter_from = 63;
-                loop = false;
-                break;
-            case 'G':
-                letter_from = 73;
-                loop = false;
-                break;
-            case 'H':
-                letter_from = 83;
-                loop = false;
-                break;
-            default:
-                break;
-        }
-                
         
+        num_from = (num_from - 1) * 4 + 2;
+        letter_from = get_letter(letter);
+        
+        printf("%i      %i\n\n", num_from, letter_from);
+    
 
         printf("\nEscolha o Destino: ");
         scanf(" %c", &let);
@@ -574,60 +469,24 @@ void move_piece_W()
         infomation_to = num_to;
 
         num_to = (num_to - 1) * 4 + 2;
-
-        switch (let) {
-            case 'A':
-                letter_to = 13;
-                loop = false;
-                break;
-            case 'B':
-                letter_to = 23;
-                loop = false;
-                break;
-            case 'C':
-                letter_to = 33;
-                loop = false;
-                break;
-            case 'D':
-                letter_to = 43;
-                loop = false;
-                break;
-            case 'E':
-                letter_to = 53;
-                loop = false;
-                break;
-            case 'F':
-                letter_to = 63;
-                loop = false;
-                break;
-            case 'G':
-                letter_to = 73;
-                loop = false;
-                break;
-            case 'H':
-                letter_to = 83;
-                loop = false;
-                break;
-            default:
-                loop = true;
-                break;
-            }
+        letter_to = get_letter(let);
+        printf("%i      %i\n\n", num_to, letter_to);
                 
-            if ( board[num_from][letter_from] == white){
-                board[num_from][letter_from] = ' ';
-            } else {
-                loop = true;
-                existant_location = false;
-            }
+        if ( board[num_from][letter_from] == white){
+            board[num_from][letter_from] = ' ';
+        } else {
+            loop = true;
+            existant_location = false;
+        }
                 
-            if (loop){
-                printf("\e[1;1H\e[2J");
-                printf("\n\n         MOVIMENTO NAO PERMITIDO\n\n         VOCE TENTOU MOVIMENTAR: %c%i -> %c%i\n", letter, infomation_from, let, infomation_to);
-                if(existant_location){
-                    board[num_from][letter_from] = white;
-                }
-                present_board();
+        if (loop){
+            printf("\e[1;1H\e[2J");
+            printf("\n\n         MOVIMENTO NAO PERMITIDO\n\n         VOCE TENTOU MOVIMENTAR: %c%i -> %c%i\n", letter, infomation_from, let, infomation_to);
+            if(existant_location){
+                board[num_from][letter_from] = white;
             }
+            present_board();
+        }
                 
         } while(loop);
         loop = true;
@@ -861,6 +720,80 @@ void game_over()
     }
     pvp = false;
     pointer = 4;
+}
+
+int get_letter(char letter)
+{
+    switch (letter) {
+        case 'A':
+            loop = false;
+            return 13;
+            break;
+        case 'a':
+            loop = false;
+            return 13;
+            break;
+        case 'B':
+            loop = false;
+            return 23;
+            break;
+        case 'b':
+            loop = false;
+            return 23;
+            break;
+        case 'C':
+            loop = false;
+            return 33;
+            break;
+        case 'c':
+            loop = false;
+            return 33;
+            break;
+        case 'D':
+            loop = false;
+            return 43;
+            break;
+        case 'd':
+            loop = false;
+            return 43;
+            break;
+        case 'E':
+            loop = false;
+            return 53;
+            break;
+        case 'e':
+            loop = false;
+            return 53;
+            break;
+        case 'F':
+            loop = false;
+            return 63;
+            break;
+        case 'f':
+            loop = false;
+            return 63;
+            break;
+        case 'G':
+            loop = false;
+            return 73;
+            break;
+        case 'g':
+            loop = false;
+            return 73;
+            break;
+        case 'H':
+            loop = false;
+            return 83;
+            break;
+        case 'h':
+            loop = false;
+            return 83;
+            break;
+        default:
+            loop = true;
+            return 0;
+            break;
+        }
 }
 
 
