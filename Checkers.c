@@ -75,6 +75,7 @@ void GAME()
 
 void present_menu()
 {
+    int input;
     
     for(int i = 0; i < 41; i++)
         printf("-");
@@ -119,25 +120,18 @@ void present_menu()
     printf("\n\n");
     
     scanf(" %c", &user_input);
+    input = user_input;
     
-    switch (user_input) {
-        case 'w':
+    switch (input) {
+        case 119:
             if(pointer != 4)
                 pointer--;
             break;
-        case 'W':
-            if(pointer != 4)
-                pointer--;
-            break;
-        case 's':
+        case 115:
             if(pointer != 7)
                 pointer++;
             break;
-        case 'S':
-            if(pointer != 7)
-                pointer++;
-            break;
-        case 'k':
+        case 107:
             if (!pvp){
                 if(pointer == 4)
                     pvp = true;
@@ -159,38 +153,13 @@ void present_menu()
                     pvp = false;
                     pointer = 4;
                 }
-                }
-            break;
-        case 'K':
-            if (!pvp){
-                if(pointer == 4)
-                    pvp = true;
-                if (pointer == 5)
-                    present_personalize_pieces();
-                if(pointer == 6)
-                    credit();
-                if(pointer == 7)
-                    running = false;
-            } else
-            {
-                if(pointer == 4)
-                    play();
-                if (pointer == 5){
-                    pvp = false;
-                    play();
-                }
-                if(pointer == 6){
-                    pvp = false;
-                    pointer = 4;
-                }
-                 
             }
             break;
         default:
             printf("ERROR... \n Aperte 'w' para movimentar a seta para cima e 's' para movimentar seta para baixo");
             break;
     }
-    printf("\n\n\n%i\n\n\n", pointer);   
+    printf("\n\n\n%i\n\n\n", pointer);
 }
 
 void play()
@@ -323,7 +292,7 @@ void move_piece_B()
         int change, arr_can_move_localizer =0, arr_can_eat = 0;
         bool pc_can_eat;
         
-        sleep(2);
+        sleep(1);
         
         while (!test){
             int can_move[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
@@ -578,14 +547,14 @@ void draw_board()
         }
 
     
-    board[2][23] = black;board[2][43] = black;board[2][63] = black;board[2][83] = black;
-    board[6][13] = black;board[6][33] = black;board[6][53] = black;board[6][73] = black;
-    board[10][23] = black;board[10][43] = black;board[10][63] = black;board[10][83] = black;
+    board[2][23]  = black;  board[2][43]  = black;  board[2][63]  = black;  board[2][83]  = black;
+    board[6][13]  = black;  board[6][33]  = black;  board[6][53]  = black;  board[6][73]  = black;
+    board[10][23] = black;  board[10][43] = black;  board[10][63] = black;  board[10][83] = black;
 
 
-    board[22][13] = white;board[22][33] = white;board[22][53] = white;board[22][73] = white;
-    board[26][23] = white;board[26][43] = white;board[26][63] =white;board[26][83] = white;
-    board[30][13] = white;board[30][33] = white;board[30][53] = white;board[30][73] = white;
+    board[22][13] = white;  board[22][33] = white;  board[22][53] = white;  board[22][73] = white;
+    board[26][23] = white;  board[26][43] = white;  board[26][63] = white;  board[26][83] = white;
+    board[30][13] = white;  board[30][33] = white;  board[30][53] = white;  board[30][73] = white;
 }
 
 void present_board()
@@ -600,10 +569,10 @@ void present_personalize_pieces()
     bool loop = true;
     printf("\e[1;1H\e[2J");
     while(loop){
-        printf("\n\n\nPersonalize a peca BRANCA. Como que você deseja que a peca branca seja?\n Escolhe uma letra ou numero:\n\n\n\n");
+        printf("\n\n\nPersonalize a peca BRANCA. Como que você deseja que a peca branca seja?\n Escolha uma letra ou numero:\n\n\n\n");
         scanf(" %c", &white);
         printf("\e[1;1H\e[2J");
-        printf("\n\n\n\nPersonalize a peca PRETA. Como que você deseja que a peca branca seja?\n Escolhe uma letra ou numero:\n\n\n\n");
+        printf("\n\n\n\nPersonalize a peca PRETA. Como que você deseja que a peca preta seja?\n Escolha uma letra ou numero:\n\n\n\n");
         scanf(" %c", &black);
         
         if(white == black){
@@ -625,6 +594,7 @@ void navigation_instructions()
 
 void credit()
 {
+    int input;
     bool credito = true;
     while (credito){
         printf("\e[1;1H\e[2J");
@@ -655,10 +625,12 @@ void credit()
         printf("\n\n");
 
         scanf(" %c", &user_input);
+        input = user_input;
         
-        if(user_input == 'k' || user_input == 'K')
+        if(input == 107){
             credito = false;
     }
+}
 }
 
 void game_over()
@@ -795,5 +767,3 @@ int get_letter(char letter)
             break;
         }
 }
-
-
